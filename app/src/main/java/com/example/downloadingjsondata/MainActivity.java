@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,11 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     EditText editText;
-    ListView listView;
-    ArrayList<String> arrayList;
-    ArrayAdapter<String> arrayAdapter;
-    //TextView txtJson;
-   // ProgressDialog pd;
+    TextView weatherView,temperatureView;
+
 
     private class DownloadJsonTask extends AsyncTask<String, String, String> {
 
@@ -94,79 +95,33 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            arrayList.add(result);
+
+            try {
+                JSONObject reader = new JSONObject(result);
+                JSONArray weather=reader.getJSONArray("weather");
+
+                weatherView.setText(weather.getJSONObject(0).getString("main")+":"+weather.getJSONObject(0).getString("description"));
+                JSONObject main  = reader.getJSONObject("main");
+                temperatureView.setText("Temperature:"+main.getString("temp")+":,feels like:"+main.getString("feels_like"));
 
 
-            arrayAdapter=new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,arrayList);
-            listView.setAdapter(arrayAdapter);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
         }
     }
 
 
 
 
-//    public class DownloadJsonTask extends AsyncTask<String,Void,String>
-//    {
-//
-//        @Override
-//        protected String doInBackground(String... urls) {
-//            URL url=null;
-//            HttpURLConnection httpURLConnection=null;
-//            InputStreamReader inputStreamReader=null;
-//            int data = 0;
-//            String res="";
-//
-//
-//            try {
-//                url=new URL(urls[0]);
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            }
-//
-//            try {
-//                httpURLConnection= (HttpURLConnection) url.openConnection();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            try {
-//                inputStreamReader=new InputStreamReader(httpURLConnection.getInputStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            try {
-//                data=inputStreamReader.read();
-//
-//                while (data!=-1)
-//                {
-//                    char curr=(char) data;
-//                    res+=curr;
-//                    data=inputStreamReader.read();
-//
-//                }
-//                // Log.i("URL",urls[0]+" "+urls[1]);
-//                return res;
-//
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//
-//
-//
-//
-//
-//            return "FAILED";
-//        }
-//    }
+
 
 
     public void Enter(View view)
     {
-
-        arrayList=new ArrayList<>();
 
         String cityName=editText.getText().toString();
         Log.i("CITY NAME",editText.getText().toString());
@@ -179,18 +134,14 @@ public class MainActivity extends AppCompatActivity {
         String result=null;
         try {
             result= task.execute(url).get();
-            Log.i("RESULT",result+"");
+         //   Log.i("RESULT",result+"");
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-//        arrayList.add(result);
-//
-//
-//         arrayAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,arrayList);
-//        listView.setAdapter(arrayAdapter);
+
 
 
     }
@@ -201,7 +152,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         editText=findViewById(R.id.editText);
-        listView=findViewById(R.id.listview);
+
+        weatherView=findViewById(R.id.weather_textView);
+        temperatureView=findViewById(R.id.temperature_textView);
+
+
 
     }
 }
