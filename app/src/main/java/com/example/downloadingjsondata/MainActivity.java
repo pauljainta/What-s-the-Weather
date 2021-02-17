@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
+                Log.i("URL",url.toString());
+
 
                 InputStream stream = connection.getInputStream();
 
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("CITY NAME",editText.getText().toString());
         String API_KEY="5f4c020a3e284f0737295bf52f97286b";
 
-        String url="http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&appid="+API_KEY;
+        String url="https://api.openweathermap.org/data/2.5/weather?q="+cityName+"&appid="+API_KEY;
 
 
         DownloadJsonTask task=new DownloadJsonTask();
